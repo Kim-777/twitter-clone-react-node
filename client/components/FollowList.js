@@ -11,12 +11,12 @@ function FollowList({ header, data }) {
             style={{marginBottom: 20}}
             grid={{gutter: 4, xs: 2, md: 3}}
             size="small"
-            header={<div>{header}</div>}
+            header={<div style={{display: 'flex', justifyContent: 'center'}}>{header}</div>}
             loadMore={<div style={{textAlign: 'center', margin: '10px 0'}}><Button>더보기</Button></div>}
             bordered
             dataSource={data}
             renderItem={(item) => (
-                <List.Item style={{marginTop: 20}}>
+                <List.Item style={{marginTop: 20, display: 'flex', justifyContent: 'center'}}>
                     <Card actions={[<StopOutlined key="stop" />]}>
                         <Card.Meta description={item.nickname} />
                     </Card>

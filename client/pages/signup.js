@@ -1,37 +1,51 @@
 import React, { useCallback, useState } from 'react'
 import AppLayout from '../components/AppLayout';
 import Head from 'next/head';
-import {Form, Input } from 'antd';
+import {Form, Input, Checkbox, Button } from 'antd';
+import useInput from '../hooks/useInput';
+import styled from 'styled-components';
+
+
+const ErrorMessage = styled.div`
+    color: pink;
+`;
 
 const Signup = () => {
 
-    const onSubmit = useCallback(
-        () => {
-            
-        },
-        [],
-    )
 
-    const [id, setId] = useState('');
-    const [nickname, setNickname] = useState('');
-    const [password, setPassword] = useState('');
+
+    const [id, onChangeId] = useInput('');
+    const [nickname, onChangeNickname] = useInput('');
+    const [password, onChangePassword] = useInput('');
+
+
     const [passwordCheck, setPasswordCheck] = useState('');
-
-    const onChangeId = useCallback((e) => {
-        setId(e.current.value);
-    }, []);
-
-    const onChangeNickname = useCallback((e) => {
-        setNickname(e.current.value);
-    }, []);
-
-    const onChangePassword = useCallback((e) => {
-        setPassword(e.current.value);
-    }, []);
-
+    const [passwordError, setPasswordError] = useState(false);
     const onChangePasswordCheck = useCallback((e) => {
-        setPasswordCheck(e.current.value);
-    }, []);
+        setPasswordCheck(e.target.value);
+        setPasswordError(e.target.value !== password);
+    }, [password]);
+
+
+
+    const [termError, setTermError] = useState(false)
+    const [term, setTerm] = useState(false);
+    const onChangeTerm = useCallback(() => {
+        setTerm(!term);
+        setTermError(false);
+
+    }, [])
+
+    const onSubmit = useCallback(() => {
+        if(password !== passwordCheck) {
+            return setPasswordError(true);
+        }
+        if(!term) {
+            return setTermError(true);
+        }
+        console.log(id, nickname, password);
+    }, [password, passwordCheck, term]);
+
 
     return (
         <AppLayout>
@@ -42,22 +56,30 @@ const Signup = () => {
                 <div>
                     <label htmlFor="user-id">아이디</label>
                     <br />
-                    <Input name="user-id" value={id} required onChange={onChangeId} />
+                    <Input name="user-id" type="text" value={id} required onChange={onChangeId} />
                 </div>
                 <div>
                     <label htmlFor="user-nickname">닉네임</label>
                     <br />
-                    <Input name="user-nickname" value={nickname} required onChange={onChangeNickname} />
+                    <Input name="user-nickname"type="text" value={nickname} required onChange={onChangeNickname} />
                 </div>
                 <div>
                     <label htmlFor="user-password">비밀번호</label>
                     <br />
-                    <Input name="user-password" value={password} required onChange={onChangePassword} />
+                    <Input name="user-password"  type="password"value={password} required onChange={onChangePassword} />
                 </div>
                 <div>
                     <label htmlFor="user-password-check">비밀번호체크</label>
                     <br />
-                    <Input name="user-password-check" value={passwordCheck} required onChange={onChangePasswordCheck} />
+                    <Input name="user-password-check" type="password" value={passwordCheck} required onChange={onChangePasswordCheck} />
+                    {passwordError && <ErrorMessage> 비밀번호가 일치하지 않습니다. </ErrorMessage>}
+                </div>
+                <div>
+                    <Checkbox name="user-term" checked={term} onChange={onChangeTerm}>김예찬 말을 잘 들을 것을 동의합니다. </Checkbox>
+                    {termError && <ErrorMessage> 약관에 동의하셔야 합니다. </ErrorMessage>}
+                </div>
+                <div style={{marginTop: 10}}>
+                    <Button type="primary" htmlType="submit"> 가입하기 </Button>
                 </div>
             </Form>
         </AppLayout>
