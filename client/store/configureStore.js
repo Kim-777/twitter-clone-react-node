@@ -6,9 +6,9 @@ import reducer from '../reducers/index';
 import rootSaga from '../sagas';
 import createSagaMiddleware from 'redux-saga';
 const loggerMiddleware = ({dispatch, getState}) => (next) => (action) => {
-    console.log('dispatch', dispatch)
-    console.log('next', next);
-    console.log('action', action);
+    // console.log('dispatch', dispatch)
+    // console.log('next', next);
+    // console.log('action', action);
 
     return next(action);
 }
