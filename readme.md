@@ -7,10 +7,4 @@
 |:--:|:--:|
 |cell1|cell2|
 
-``` javascript
-
-function solution() {
-
-}
-
-```
+* 테스트 ~ wsl2 에서 그냥 윈도우로 옮겨와 봤습니다!!
