@@ -24,6 +24,10 @@ export const CHANGE_NICKNAME_REQUEST = 'CHANGE_NICKNAME_REQUEST';
 export const CHANGE_NICKNAME_SUCCESS = 'CHANGE_NICKNAME_SUCCESS';
 export const CHANGE_NICKNAME_FAILURE = 'CHANGE_NICKNAME_FAILURE';
 
+export const LOAD_MY_INFO_REQUEST = 'LOAD_MY_INFO_REQUEST';
+export const LOAD_MY_INFO_SUCCESS = 'LOAD_MY_INFO_SUCCESS';
+export const LOAD_MY_INFO_FAILURE = 'LOAD_MY_INFO_FAILURE';
+
 export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
 export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME';
 
@@ -42,17 +46,20 @@ export const logoutRequestAction = () => {
 }
 
 // 더미 데이터 함수
-const dummyUser = (data) => ({
-    ...data,
-    nickname: '와빵',
-    id: 1,
-    Posts: [{id: 1}],
-    Followings: [{nickname: '리신'}, {nickname: '피즈'}, {nickname: '릴리야'}],
-    Followers: [{nickname: '리신'}, {nickname: '피즈'}, {nickname: '릴리야'}],
-})
+// const dummyUser = (data) => ({
+//     ...data,
+//     nickname: '와빵',
+//     id: 1,
+//     Posts: [{id: 1}],
+//     Followings: [{nickname: '리신'}, {nickname: '피즈'}, {nickname: '릴리야'}],
+//     Followers: [{nickname: '리신'}, {nickname: '피즈'}, {nickname: '릴리야'}],
+// })
 
 
 export const initialState = {
+	loadUserLoading: false,	
+	loadUserDone: false,
+	loadUserError: null,
     logInLoading: false,
     logInDone: false,
     logInError: null,
@@ -79,6 +86,20 @@ export const initialState = {
 const reducer = (state= initialState, action) => {
     return produce(state, draft => {
         switch (action.type) {
+				case LOAD_MY_INFO_REQUEST :
+						draft.loadUserLoading = true;
+						draft.loadUserError = null;
+						draft.loadUserDone = false;
+						break;
+				case LOAD_MY_INFO_SUCCESS :
+						draft.loadUserLoading = false;
+						draft.loadUserDone = true;
+						draft.me = action.data
+						break;
+				case LOAD_MY_INFO_FAILURE :
+						draft.loadUserLoading = false,
+						draft.loadUserError = action.error
+						break;
                 case LOG_IN_REQUEST :
                         draft.logInLoading = true;
                         draft.logInError = null;
@@ -87,7 +108,7 @@ const reducer = (state= initialState, action) => {
                 case LOG_IN_SUCCESS :
                         draft.logInLoading = false;
                         draft.logInDone = true;
-                        draft.me = dummyUser(action.data)
+                        draft.me = action.data
                         break;
                 case LOG_IN_FAILURE :
                         draft.logInLoading = false,
@@ -147,7 +168,7 @@ const reducer = (state= initialState, action) => {
                         break;
                 case SIGN_UP_FAILURE :
                         draft.signUpLoading = false;
-                        draft.signUpError = action.err;
+                        draft.signUpError = action.error;
                         break;
                 case CHANGE_NICKNAME_REQUEST :
                         draft.changeNicknameLoading = true; 
@@ -160,7 +181,7 @@ const reducer = (state= initialState, action) => {
                         break;
                 case CHANGE_NICKNAME_FAILURE :
                         draft.changeNicknameLoading = false;
-                        draft.changeNicknameError = action.err;
+                        draft.changeNicknameError = action.error;
                         break;
                 case ADD_POST_TO_ME: 
                         draft.me.Posts.unshift({id:action.data});
