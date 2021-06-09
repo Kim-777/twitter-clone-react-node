@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, List, Card} from 'antd';
 import PropTypes from 'prop-types';
 import {
-    StopOutlined,
+    StopOutlined
 } from '@ant-design/icons';
 
 const FollowList = ({ header, data }) => {

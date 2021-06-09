@@ -8,7 +8,7 @@ const configureStore = () => {
     const middlewares = [];
     const enhancer = process.env.NODE_ENV === 'production'
         ? compose(applyMiddleware(...middlewares))
-        : composeWithDevTools(compose(applyMiddleware(...middlewares)));
+        : composeWithDevTools(applyMiddleware(...middlewares));
     const store = createStore(rootReducer, enhancer);
     return store;
 };

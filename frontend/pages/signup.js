@@ -15,18 +15,20 @@ const Signup = () => {
     const [nickname, onChangeNickname] = useInput('');
     const [password, onChangePassword] = useInput('');
     const [passwordError, setPasswordError] = useState(false);
-    const [term, setTerm] = useState('');
-    const [termError, setTermError] = useState(false)
+    
+    
     const [passwordConfirm, setPasswordConfirm] = useState('');
     const onChangePasswordConfirm = useCallback(e => {
         setPasswordConfirm(e.target.value);
         setPasswordError(e.target.value !== password);
-    });
-
+    }, [password]);
+    
+    
+    const [termError, setTermError] = useState(false)
+    const [term, setTerm] = useState('');
     const onChangeTerm = useCallback(e => {
-
         const currentChecked = e.target.checked
-        console.log('currentChecked : ', currentChecked)
+        // console.log('currentChecked : ', currentChecked)
         setTerm(currentChecked);
         setTermError(false);
     })
@@ -36,7 +38,7 @@ const Signup = () => {
             return alert('필수 입력란을 꼭 입력해주세요.');
         }
 
-        console.log("test");
+        // console.log("test");
         if (password !== passwordConfirm) {
             return setPasswordError(true);
         }

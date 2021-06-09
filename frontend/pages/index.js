@@ -14,7 +14,7 @@ const Home = () => {
     return (
         <>
             <Head>
-                <title>Home | chaty</title>
+                <title>chaty</title>
             </Head>
             <AppLayout>
                 {isLoggedIn && <PostForm />}
