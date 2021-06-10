@@ -4,8 +4,8 @@ import Link from 'next/link';
 import styled from 'styled-components';
 // import PropTypes from 'prop-types';
 import useInput from '../hooks/useInput';
-import { useDispatch } from 'react-redux';
-import { login } from '../reducers/user';
+import { useDispatch, useSelector } from 'react-redux';
+import { logInRequestAction } from '../reducers/user';
 
 const ButtonWrapper = styled.div`
     margin-top: 10px;
@@ -17,26 +17,28 @@ const FormWrapper = styled(Form)`
 
 const LoginForm = () => {
 
+    const { logInLoading } = useSelector(({user}) => user);
     const dispatch = useDispatch();
-    const [id, onChangeId] = useInput('');
+    const [email, onChangeEmail] = useInput('');
     const [password, onChangePassword] = useInput('');
 
 
     const onSubmitForm = useCallback(() => {
-        console.log(id, password);
-        dispatch(login({id, password}))
-    }, [id, password, dispatch]);
+        console.log(email, password);
+        dispatch(logInRequestAction({email, password}))
+    }, [email, password, dispatch]);
 
     return (
         <FormWrapper onFinish={onSubmitForm}>
             <div>
-                <label htmlFor="user_id">아이디</label>
+                <label htmlFor="user_email">이메일</label>
                 <br />
                 <Input 
-                    name="user_id" 
-                    value={id} 
-                    onChange={onChangeId} 
+                    name="user_email" 
+                    value={email} 
+                    onChange={onChangeEmail} 
                     required 
+                    type="email"
                 />
             </div>
             <div>
@@ -50,7 +52,7 @@ const LoginForm = () => {
                 />
             </div>
             <ButtonWrapper>
-                <Button type="primary" htmlType="submit" loading={false}>로그인</Button>
+                <Button type="primary" htmlType="submit" loading={logInLoading}>로그인</Button>
                 <Link href="/signup"><a><Button>회원가입</Button></a></Link>
             </ButtonWrapper>
         </FormWrapper>

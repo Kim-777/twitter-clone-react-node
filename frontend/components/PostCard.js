@@ -6,14 +6,20 @@ import {
     HeartOutlined, 
     HeartTwoTone,
     MessageOutlined, 
-    RetweetOutlined } from '@ant-design/icons';
-import { useSelector } from 'react-redux';
+    RetweetOutlined 
+} from '@ant-design/icons';
+import { useSelector, useDispatch } from 'react-redux';
 import Avatar from 'antd/lib/avatar/avatar';
 import PostImages from './PostImages';
 import CommentForm from './CommentForm';
-
+import PostCardContent from './PostCardContent';
+import { REMOVE_POST_REQUEST } from '../reducers/post';
 
 const PostCard = ({ post }) => {
+    
+    const id = useSelector(({user}) => user.me?.id);
+    const { removePostLoading } = useSelector(({post}) => post)
+    const dispatch = useDispatch();
 
     const [liked, setLiked] = useState(false);
     const [commentFormOpened, setCommentFormOpened] = useState(false)
@@ -25,9 +31,15 @@ const PostCard = ({ post }) => {
 
     const onToggleComment = useCallback(() => {
         setCommentFormOpened((prev) => !prev);
-    })
+    });
 
-    const id = useSelector(({user}) => user.me?.id);
+    const onRemovePost = useCallback(() => {
+        dispatch({
+            type: REMOVE_POST_REQUEST,
+            data: post.id
+        })
+    }, [])
+
 
     return (
         <div style={{marginBottom: 20}}>
@@ -56,7 +68,7 @@ const PostCard = ({ post }) => {
                             {id && post.User.id === id ? (
                                 <>
                                     <Button>수정</Button>
-                                    <Button type="danger">삭제</Button>
+                                    <Button type="danger" onClick={onRemovePost} loading={removePostLoading}>삭제</Button>
                                 </>
                             ) : (<Button>신고</Button>)}
                             
@@ -70,6 +82,7 @@ const PostCard = ({ post }) => {
                 <Card.Meta
                     avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
                     title={post.User.nickname}
+                    description={<PostCardContent postData={post.content} />}
                 />
             </Card>
             {commentFormOpened && (
@@ -97,7 +110,7 @@ const PostCard = ({ post }) => {
 
 PostCard.propTypes = {
     post: PropTypes.shape({
-        id: PropTypes.number,
+        id: PropTypes.string,
         User: PropTypes.object,
         content: PropTypes.string,
         createdAt: PropTypes.object,

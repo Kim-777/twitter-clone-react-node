@@ -4,6 +4,8 @@ import { Form, Input, Checkbox, Button } from 'antd';
 import Head from 'next/head';
 import useInput from '../hooks/useInput';
 import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+import { SIGN_UP_REQUEST } from '../reducers/user';
 
 const ErrorMessage = styled.div`
     color: red;
@@ -11,11 +13,14 @@ const ErrorMessage = styled.div`
 
 const Signup = () => {
 
-    const [id, onChangeId] = useInput('');
+    const [email, onChangeEmail] = useInput('');
     const [nickname, onChangeNickname] = useInput('');
     const [password, onChangePassword] = useInput('');
     const [passwordError, setPasswordError] = useState(false);
+    const { signUpLoading } = useSelector(({user}) => user)
+    const dispatch = useDispatch();
     
+
     
     const [passwordConfirm, setPasswordConfirm] = useState('');
     const onChangePasswordConfirm = useCallback(e => {
@@ -34,7 +39,7 @@ const Signup = () => {
     })
 
     const onSubmit = useCallback(() => {
-        if(id=== '' || password === '') {
+        if(email=== '' || password === '') {
             return alert('필수 입력란을 꼭 입력해주세요.');
         }
 
@@ -47,7 +52,13 @@ const Signup = () => {
             return setTermError(true);
         }
 
-        console.log(id, nickname, password);
+        console.log(email, nickname, password);
+
+        dispatch({
+            type: SIGN_UP_REQUEST,
+            data : { email, password, nickname }
+        })
+        
     }, [password, passwordConfirm, term, nickname]);
 
 
@@ -59,9 +70,9 @@ const Signup = () => {
             <AppLayout>
                 <Form onFinish={onSubmit}>
                     <div>
-                        <label htmlFor="user_id">아이디</label>
+                        <label htmlFor="user_email">이메일</label>
                         <br />
-                        <Input name="user_id" value={id} required onChange={onChangeId} />
+                        <Input name="user_email" type="email" value={email} required onChange={onChangeEmail} />
                     </div>
                     <div>
                         <label htmlFor="user_nickname">닉네임</label>
@@ -82,7 +93,7 @@ const Signup = () => {
                     <Checkbox name="user_term" checked={term} onChange={onChangeTerm}>와빵의 말을 잘 들을 것을 동의합니다.</Checkbox>
                     {termError && <ErrorMessage> 약관에 동의하셔야 합니다.</ErrorMessage>}
                     <div style={{ marginTop: 10}}>
-                        <Button type="primary" htmlType="submit">가입하기</Button>
+                        <Button type="primary" htmlType="submit" loading={signUpLoading}>가입하기</Button>
                     </div>
                 </Form>
             </AppLayout>
