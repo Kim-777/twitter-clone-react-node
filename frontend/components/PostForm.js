@@ -3,6 +3,8 @@ import React, { useCallback, useRef, useState } from 'react';
 // import useInput from '../hooks/useInput';
 import { useSelector, useDispatch } from 'react-redux';
 import { addPost } from '../reducers/post';
+
+
 const PostForm = () => {
 
     const imageInput = useRef();

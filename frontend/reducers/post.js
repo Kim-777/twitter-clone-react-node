@@ -37,13 +37,13 @@ const initialState = {
                 src: 'https://gimg.gilbut.co.kr/book/BN001958/rn_view_BN001958.jpg',
             },
             {
-                src: 'https://gimg/gilbut.co.kr/book/BN001998/rn_view_BN001998.jpg',
+                src: 'https://t1.daumcdn.net/thumb/R720x0.fjpg/?fname=http://t1.daumcdn.net/brunch/service/user/1IBC/image/aLsVmPfNMT4AayYnwof72R-alDE',
             },
         ],
         Comments: [
             {
                 User: {
-                    nickanme: 'nero',
+                    nickname: 'nero',
                 },
                 content: '우왕 신기하다~'  
             },
@@ -70,7 +70,7 @@ const post = ( state = initialState, action ) => {
                 ...state,
                 mainPosts: [dummyPost, ...state.mainPosts],
                 postAdded: true,
-            }
+            };
         default:
             return state;
     }
