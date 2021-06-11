@@ -118,8 +118,22 @@ router.delete('/:postId/unlike', isLoggedIn, async (req, res, next) => {
 })
 
 
-router.delete('/', (req, res) => {
-    res.json({id: 1});
+router.delete('/:postId', isLoggedIn, async (req, res) => {
+    try {
+        await Post.destroy({
+            where: { 
+                id: req.params.postId,
+                UserId: req.user.id,
+            }
+        })
+
+        return res.status(200).json({PostId: parseInt(req.params.postId, 10)});
+
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+    
 });
 
 

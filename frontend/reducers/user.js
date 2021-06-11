@@ -1,6 +1,11 @@
 import produce from "immer";
 
 // 액션 타입
+
+export const LOAD_MY_INFO_REQUEST = 'user/LOAD_MY_INFO_REQUEST';
+export const LOAD_MY_INFO_SUCCESS = 'user/LOAD_MY_INFO_SUCCESS';
+export const LOAD_MY_INFO_FAILURE = 'user/LOAD_MY_INFO_FAILURE';
+
 export const LOG_IN_REQUEST = 'user/LOG_IN_REQUEST';
 export const LOG_IN_SUCCESS = 'user/LOG_IN_SUCCESS';
 export const LOG_IN_FAILURE = 'user/LOG_IN_FAILURE';
@@ -51,6 +56,9 @@ export const signUpRequestAction = ({id, password}) => ({
 
 // 이니셜 스테이트
 const initialState = {
+    loadMyInfoLoading: false,
+    loadMyInfoDone: false,
+    loadMyInfoError: null,
     logInLoading: false,
     logInDone: false,
     logInError: null,
@@ -86,6 +94,20 @@ const dummyUser = (data) => ({
 // 리듀서
 const user = ( state = initialState, action ) => produce(state, (draft) => {
     switch (action.type) {
+        case LOAD_MY_INFO_REQUEST :
+            draft.loadMyInfoLoading = true;
+            draft.loadMyInfoError = null;
+            draft.loadMyInfoDone = false;
+            break;
+        case LOAD_MY_INFO_SUCCESS :
+            draft.loadMyInfoLoading = false;
+            draft.loadMyInfoDone = true;
+            draft.me = action.data;
+            break;
+        case LOAD_MY_INFO_FAILURE : 
+            draft.loadMyInfoLoading = false;
+            draft.loadMyInfoError = action.error;
+            break;
         case FOLLOW_REQUEST :
             draft.followLoading = true;
             draft.followError = null;
@@ -122,7 +144,7 @@ const user = ( state = initialState, action ) => produce(state, (draft) => {
         case LOG_IN_SUCCESS :
             draft.logInLoading = false;
             draft.logInDone = true;
-            draft.me = dummyUser(action.data);
+            draft.me = action.data;
             break;
         case LOG_IN_FAILURE : 
             draft.logInLoading = false;
@@ -161,6 +183,7 @@ const user = ( state = initialState, action ) => produce(state, (draft) => {
             draft.changeNickNameError = null;
             break;
         case CHANGE_NICKNAME_SUCCESS :
+            draft.me.nickname = action.data.nickname;
             draft.changeNickNameLoading = false;
             draft.changeNickNameDone = true;
             break;

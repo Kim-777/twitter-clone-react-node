@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import PostForm from '../components/PostForm';
 import PostCard from '../components/PostCard';
 import { LOAD_POSTS_REQUEST } from '../reducers/post';
+import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
 
 
 const Home = () => {
@@ -13,6 +14,11 @@ const Home = () => {
     const { mainPosts, hasMorePosts, loadPostsLoading } = useSelector(({post}) => post);
     
     useEffect(() => {
+
+        dispatch({
+            type: LOAD_MY_INFO_REQUEST,
+        })
+
         dispatch({
             type: LOAD_POSTS_REQUEST,
         });
