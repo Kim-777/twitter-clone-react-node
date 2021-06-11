@@ -1,3 +1,5 @@
+import produce from "immer";
+
 // 액션 타입
 export const LOG_IN_REQUEST = 'user/LOG_IN_REQUEST';
 export const LOG_IN_SUCCESS = 'user/LOG_IN_SUCCESS';
@@ -76,106 +78,152 @@ const dummyUser = (data) => ({
 })
 
 // 리듀서
-const user = ( state = initialState, action ) => {
+const user = ( state = initialState, action ) => produce(state, (draft) => {
     switch (action.type) {
         case LOG_IN_REQUEST :
-            return {
-                ...state,
-                logInLoading: true,
-                logInError: null,
-                logInDone: false,
-            }
+            // return {
+            //     ...state,
+            //     logInLoading: true,
+            //     logInError: null,
+            //     logInDone: false,
+            // }
+            draft.logInLoading = true;
+            draft.logInError = null;
+            draft.logInDone = false;
+            break;
         case LOG_IN_SUCCESS :
-            return {
-                ...state,
-                logInLoading: false,
-                logInDone: true,
-                me: dummyUser(action.data),
-            }
+            // return {
+            //     ...state,
+            //     logInLoading: false,
+            //     logInDone: true,
+            //     me: dummyUser(action.data),
+            // }
+            draft.logInLoading = false;
+            draft.logInDone = true;
+            draft.me = dummyUser(action.data);
+            break;
         case LOG_IN_FAILURE : 
-            return {
-                ...state,
-                logInLoading: false,
-                logInError: action.error
-            }
+            // return {
+            //     ...state,
+            //     logInLoading: false,
+            //     logInError: action.error
+            // }
+            draft.logInLoading = false;
+            draft.logInError = action.error;
+            break;
         case LOG_OUT_REQUEST :
-            return {
-                ...state,
-                logOutLoading: true,
-                logOutDone: false,
-                logOutError: null,
-            }
+            // return {
+            //     ...state,
+            //     logOutLoading: true,
+            //     logOutDone: false,
+            //     logOutError: null,
+            // }
+            draft.logOutLoading = true;
+            draft.logOutDone = false;
+            draft.logOutError = null;
+            break;
         case LOG_OUT_SUCCESS :
-            return {
-                ...state,
-                logOutLoading: false,
-                logOutDone: true,
-                me: null,
-            } 
+            // return {
+            //     ...state,
+            //     logOutLoading: false,
+            //     logOutDone: true,
+            //     me: null,
+            // } 
+            draft.logOutLoading = false;
+            draft.logOutDone = true;
+            draft.me = null;
+            break;
         case LOG_OUT_FAILURE :
-            return {
-                ...state,
-                logOutLoading: false,
-                logOutError: action.error,
-            }
+            // return {
+            //     ...state,
+            //     logOutLoading: false,
+            //     logOutError: action.error,
+            // }
+            draft.logOutLoading = false;
+            draft.logOUtError = action.error;
+            break;
         case SIGN_UP_REQUEST :
-            return {
-                ...state,
-                signUpLoading: true,
-                signUpDone: false,
-                signUpError: false,         
-            }
+            // return {
+            //     ...state,
+            //     signUpLoading: true,
+            //     signUpDone: false,
+            //     signUpError: false,         
+            // }
+            draft.signUpLoading = true;
+            draft.signUpDone = false;
+            draft.signUpError = false;
+            break;
         case SIGN_UP_SUCCESS :
-            return {
-                ...state,
-                signUpLoading: false,
-                signUpDone: true,
-            }
+            // return {
+            //     ...state,
+            //     signUpLoading: false,
+            //     signUpDone: true,
+            // }
+            draft.signUpLoading = false;
+            draft.signUpDone = true;
+            break
         case SIGN_UP_FAILURE :
-            return {
-                ...state,
-                signUpLoading: false,
-                signUpError: action.error,  
-            }
+            // return {
+            //     ...state,
+            //     signUpLoading: false,
+            //     signUpError: action.error,  
+            // }
+            draft.signUpLoading = false;
+            draft.signUpError = action.error;
+            break;
         case CHANGE_NICKNAME_REQUEST :
-            return {
-                ...state,
-                changeNickNameLoading: true,    
-                changeNickNameDone: false,
-                changeNickNameError: null,       
-            }
+            // return {
+            //     ...state,
+            //     changeNickNameLoading: true,    
+            //     changeNickNameDone: false,
+            //     changeNickNameError: null,       
+            // }
+            draft.changeNickNameLoading = true;
+            draft.changeNickNameDone = false;
+            draft.changeNickNameError = null;
+            break;
         case CHANGE_NICKNAME_SUCCESS :
-            return {
-                ...state,
-                changeNickNameLoading: false,    
-                changeNickNameDone: true,
-            }
+            // return {
+            //     ...state,
+            //     changeNickNameLoading: false,    
+            //     changeNickNameDone: true,
+            // }
+            draft.changeNickNameLoading = false;
+            draft.changeNickNameDone = true;
+            break;
         case CHANGE_NICKNAME_FAILURE :
-            return {
-                ...state,
-                changeNickNameLoading: false,    
-                changeNickNameError: action.error, 
-            }
+            // return {
+            //     ...state,
+            //     changeNickNameLoading: false,    
+            //     changeNickNameError: action.error, 
+            // }
+            draft.changeNickNameLoading = false;
+            draft.changeNickNameError = action.error;
+            break;
         case ADD_POST_TO_ME :
-            return {
-                ...state,
-                me: {
-                    ...state.me,
-                    Posts: [{id: action.data}, ...state.me.Posts]
-                }
-            }
+            // return {
+            //     ...state,
+            //     me: {
+            //         ...state.me,
+            //         Posts: [{id: action.data}, ...state.me.Posts]
+            //     }
+            // }
+            draft.me.Posts.unshift({id: action.data});
+            break;
         case REMOVE_POST_OF_ME:
-            return {
-                ...state,
-                me: {
-                    ...state.me,
-                    Posts: state.me.Posts.filter((v) => v.id !== action.data)
-                }
-            }
+            // return {
+            //     ...state,
+            //     me: {
+            //         ...state.me,
+            //         Posts: state.me.Posts.filter((v) => v.id !== action.data)
+            //     }
+            // }
+            draft.me.Posts.splice(draft.me.Posts.findIndex(v => v.id === action.data), 1);
+            break;
         default:
-            return state;
+            break;
     }
-}
+})
 
 
 export default user;
