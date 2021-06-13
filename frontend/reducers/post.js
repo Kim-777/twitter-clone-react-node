@@ -2,6 +2,10 @@ import produce from 'immer';
 
 // 액션 타입 정의
 
+export const UPLOAD_IMAGES_REQUEST = 'post/UPLOAD_IMAGES_REQUEST';
+export const UPLOAD_IMAGES_SUCCESS = 'post/UPLOAD_IMAGES_SUCCESS';
+export const UPLOAD_IMAGES_FAILURE = 'post/UPLOAD_IMAGES_FAILURE';
+
 export const LIKE_POST_REQUEST = 'post/LIKE_POST_REQUEST';
 export const LIKE_POST_SUCCESS = 'post/LIKE_POST_SUCCESS';
 export const LIKE_POST_FAILURE = 'post/LIKE_POST_FAILURE';
@@ -39,16 +43,6 @@ export const addCommentRequestAction = (data) => ({
 })
 
 
-const dummyComment = (data) => ({
-    id: data.id,
-    content: data.content,
-    User: {
-        id: 1,
-        nickname: "와빵"
-    },
-})
-
-
 
 // 이니셜 스테이트
 const initialState = {
@@ -73,13 +67,30 @@ const initialState = {
     addCommentLoading: false,
     addCommentDone: false,
     addCommentError: null,
-
+    uploadImagesLoading: false,
+    uploadImagesDone: false,
+    uploadImagesError: null,   
 };
 
 
 // 리듀서
 const post = ( state = initialState, action ) => produce(state, (draft) => {
     switch (action.type) {
+        case UPLOAD_IMAGES_REQUEST:
+            draft.uploadImagesLoading = true;
+            draft.uploadImagesDone = false;
+            draft.uploadImagesError = null;
+            break;
+        case UPLOAD_IMAGES_SUCCESS : {
+            draft.imagePaths = action.data;
+            draft.uploadImagesLoading = false;
+            draft.uploadImagesDone = true;
+            break;
+        }
+        case UPLOAD_IMAGES_FAILURE :
+            draft.uploadImagesLoading = false;
+            draft.uploadImagesError = action.error;
+            break;
         case LIKE_POST_REQUEST:
             draft.likePostLoading = true;
             draft.likePostDone = false;
