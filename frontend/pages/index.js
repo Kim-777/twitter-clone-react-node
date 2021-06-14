@@ -11,7 +11,7 @@ import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
 const Home = () => {
     const dispatch = useDispatch();
     const { me } = useSelector(({user}) => user);
-    const { mainPosts, hasMorePosts, loadPostsLoading } = useSelector(({post}) => post);
+    const { mainPosts, hasMorePosts, loadPostsLoading, retweetError } = useSelector(({post}) => post);
     
     useEffect(() => {
 
@@ -25,12 +25,20 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
+        if(retweetError) {
+            return alert(retweetError);
+        }
+    }, [retweetError]);
+
+    useEffect(() => {
         function onScroll() {
-            console.log(window.scrollY, document.documentElement.clientHeight, document.documentElement.scrollHeight);
+            // console.log(window.scrollY, document.documentElement.clientHeight, document.documentElement.scrollHeight);
             if(window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
                 if(hasMorePosts && !loadPostsLoading) {
+                    const lastId = mainPosts[mainPosts.length - 1]?.id;
                     dispatch({
                         type: LOAD_POSTS_REQUEST,
+                        lastId,
                     });                
                 }
             }

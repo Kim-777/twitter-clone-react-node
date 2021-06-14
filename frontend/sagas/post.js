@@ -22,6 +22,9 @@ import {
     UPLOAD_IMAGES_REQUEST,
     UPLOAD_IMAGES_SUCCESS,
     UPLOAD_IMAGES_FAILURE,
+    RETWEET_REQUEST,
+    RETWEET_SUCCESS,
+    RETWEET_FAILURE,
 } from '../reducers/post'
 import {
     ADD_POST_TO_ME, REMOVE_POST_OF_ME
@@ -91,14 +94,14 @@ function* unlikePost(action) {
     }
 }
 
-function loadPostsAPI(data) {
-    return axios.get('/posts');
+function loadPostsAPI(lastId) {
+    return axios.get(`/posts?lastId=${lastId || 0}`);
 }
 
 function* loadPosts(action) {
     console.log('loadPosts')
     try {
-        const result = yield call(loadPostsAPI, action.data);
+        const result = yield call(loadPostsAPI, action.lastId);
         yield put({
             type: LOAD_POSTS_SUCCESS,
             data: result.data,
@@ -113,7 +116,7 @@ function* loadPosts(action) {
 }
 
 function addPostAPI(data) {
-    return axios.post('/post', {content: data});
+    return axios.post('/post', data);
 }
 
 function* addPost(action) {
@@ -185,6 +188,31 @@ function* addComment(action) {
 }
 
 
+function retweetAPI(data) {
+
+    return axios.post(`/post/${data}/retweet`)
+
+}
+
+function* retweet(action) {
+
+    try {
+        const result = yield call(retweetAPI, action.data);
+        yield put({
+            type: RETWEET_SUCCESS,
+            data: result.data,
+        })
+    } catch (err) {
+        console.error(err);
+        yield put({
+            type: RETWEET_FAILURE,
+            error: err.response.data,
+        })
+    }
+
+}
+
+
 function* watchUploadImages() {
     yield takeLatest(UPLOAD_IMAGES_REQUEST, uploadImages);
 }
@@ -214,6 +242,10 @@ function* watchAddComment() {
     yield takeLatest(ADD_COMMENT_REQUEST, addComment)
 }
 
+function* watchRetweet() {
+    yield takeLatest(RETWEET_REQUEST, retweet)
+}
+
 export default function* postSaga() {
     yield all([
         fork(watchUploadImages),
@@ -223,5 +255,6 @@ export default function* postSaga() {
         fork(watchAddPost),
         fork(watchAddComment),
         fork(watchRemovePost),
+        fork(watchRetweet),
     ])
 }

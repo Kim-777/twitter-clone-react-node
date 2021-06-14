@@ -3,8 +3,9 @@ import React, { useCallback, useRef, useEffect } from 'react';
 // import useInput from '../hooks/useInput';
 import { useSelector, useDispatch } from 'react-redux';
 import { 
-    addPostRequestAction,
     UPLOAD_IMAGES_REQUEST,
+    REMOVE_IMAGE,
+    ADD_POST_REQUEST,
 } from '../reducers/post';
 import useInput from '../hooks/useInput';
 
@@ -27,8 +28,24 @@ const PostForm = () => {
     }, [imageInput.current])
 
     const onSubmit = useCallback(() => {
-        dispatch(addPostRequestAction(text));
-    }, [text]);
+
+        if(!text || !text.trim()) {
+            return alert('게시글을 작성하세요.');
+        }
+
+
+        const formData = new FormData();
+
+        imagePaths.forEach((p) => {
+            formData.append('image', p);
+        });
+
+        formData.append('content', text);
+        return dispatch({
+            type: ADD_POST_REQUEST,
+            data: formData,
+        });
+    }, [text,imagePaths]);
 
     const onChangeImages = useCallback((e) => {
         console.log('images', e.target.files);
@@ -40,7 +57,14 @@ const PostForm = () => {
             type: UPLOAD_IMAGES_REQUEST,
             data: imageFormData
         })
-    });
+    }, []);
+
+    const onRemoveImage = useCallback((index) => () => {
+        dispatch({
+            type: REMOVE_IMAGE,
+            data: index,
+        })
+    }, [])
 
     return (
         <Form style={{ margin: '10px 0 20px'}} encType="multipart/form-data" onFinish={onSubmit}>
@@ -54,8 +78,8 @@ const PostForm = () => {
                 <input 
                     type="file" 
                     name="image" 
-                    multiple 
-                    hidden 
+                    multiple
+                    hidden
                     ref={imageInput}
                     onChange={onChangeImages}
                 />
@@ -63,11 +87,11 @@ const PostForm = () => {
                 <Button type="primary" style={{ float: 'right'}} htmlType="submit">짹짹</Button>
             </div>
             <div>
-                {imagePaths.map(v => (
+                {imagePaths.map((v, i) => (
                     <div key={v} style={{ display: 'inline-block'}}>
                         <img src={`http://localhost:3065/${v}`} style={{ width: '200px'}} alt={v} />
                         <div>
-                            <Button>제거</Button>
+                            <Button onClick={onRemoveImage(i)}>제거</Button>
                         </div>
                     </div>
                 ))}

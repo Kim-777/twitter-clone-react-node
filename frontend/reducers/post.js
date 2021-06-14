@@ -2,6 +2,10 @@ import produce from 'immer';
 
 // 액션 타입 정의
 
+export const RETWEET_REQUEST = 'post/RETWEET_REQUEST';
+export const RETWEET_SUCCESS = 'post/RETWEET_SUCCESS';
+export const RETWEET_FAILURE = 'post/RETWEET_FAILURE';
+
 export const UPLOAD_IMAGES_REQUEST = 'post/UPLOAD_IMAGES_REQUEST';
 export const UPLOAD_IMAGES_SUCCESS = 'post/UPLOAD_IMAGES_SUCCESS';
 export const UPLOAD_IMAGES_FAILURE = 'post/UPLOAD_IMAGES_FAILURE';
@@ -30,6 +34,8 @@ export const REMOVE_POST_FAILURE = 'post/REMOVE_POST_FAILURE';
 export const ADD_COMMENT_REQUEST = 'post/ADD_COMMENT_REQUEST';
 export const ADD_COMMENT_SUCCESS = 'post/ADD_COMMENT_SUCCESS';
 export const ADD_COMMENT_FAILURE = 'post/ADD_COMMENT_FAILURE';
+
+export const REMOVE_IMAGE = 'post/REMOVE_IMAGE';
 
 // 액션 생성 함수
 export const addPostRequestAction = (data) => ({
@@ -69,13 +75,19 @@ const initialState = {
     addCommentError: null,
     uploadImagesLoading: false,
     uploadImagesDone: false,
-    uploadImagesError: null,   
+    uploadImagesError: null,
+    retweetLoading: false,
+    retweetDone: false,
+    retweetError: null,      
 };
 
 
 // 리듀서
 const post = ( state = initialState, action ) => produce(state, (draft) => {
     switch (action.type) {
+        case REMOVE_IMAGE:
+            draft.imagePaths = draft.imagePaths.filter((v, i) => i !== action.data);
+            break;
         case UPLOAD_IMAGES_REQUEST:
             draft.uploadImagesLoading = true;
             draft.uploadImagesDone = false;
@@ -131,9 +143,9 @@ const post = ( state = initialState, action ) => produce(state, (draft) => {
             break;
         case LOAD_POSTS_SUCCESS :
             draft.loadPostsLoading = false;
-            draft.mainPosts = action.data.concat(draft.mainPosts);
+            draft.mainPosts = draft.mainPosts.concat(action.data);
             draft.loadPostsDone = true;
-            draft.hasMorePosts = draft.mainPosts.length < 50;
+            draft.hasMorePosts = draft.mainPosts.length === 10;
             break;
         case LOAD_POSTS_FAILURE :
             draft.loadPostsLoading = false;
@@ -148,6 +160,7 @@ const post = ( state = initialState, action ) => produce(state, (draft) => {
             draft.addPostLoading = false;
             draft.mainPosts.unshift(action.data);
             draft.addPostDone = true;
+            draft.imagePaths = [];
             break;
         case ADD_POST_FAILURE :
             draft.addPostLoading = false;
@@ -183,8 +196,24 @@ const post = ( state = initialState, action ) => produce(state, (draft) => {
             draft.addCommentLoading = false;
             draft.addCommentError = action.error;
             break;
+        case RETWEET_REQUEST:
+            draft.retweetLoading = true;
+            draft.retweetDone = false;
+            draft.retweetError = null;
+            break;
+        case RETWEET_SUCCESS : {
+            draft.retweetLoading = false;
+            draft.retweetDone = true;
+            draft.mainPosts.unshift(action.data);
+            break;
+        }
+        case RETWEET_FAILURE :
+            draft.retweetLoading = false;
+            draft.retweetError = action.error;
+            break;
         default:
             break;
+            
     }
 })
 
