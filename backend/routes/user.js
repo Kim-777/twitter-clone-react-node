@@ -8,6 +8,7 @@ const { isLoggedIn, isNotLoggedIn } = require('../middleware/auth');
 
 // 로그인 상태 유지
 router.get('/', async (req, res, next) => {
+    console.log(req.headers);
     try{
         if(req.user) {
             const fullUserWithoutPassword = await User.findOne({
@@ -40,6 +41,42 @@ router.get('/', async (req, res, next) => {
     }
 })
 
+// 특정 user 가져오기
+router.get('/:userId', async (req, res, next) => {
+    try {
+        const fullUserWithoutPassword = await User.findOne({
+            where: {id: req.params.userId},
+            attributes: {
+                exclude:['password']
+            },
+            include: [{
+                model: Post,
+                attributes: ['id'],
+            }, {
+                model: User,
+                as: 'Followings',
+                attributes: ['id'],
+            }, {
+                model: User,
+                as: 'Followers',
+                attributes: ['id'],
+            }]
+        });
+        if(fullUserWithoutPassword) {
+            const data = fullUserWithoutPassword.toJSON();
+            data.Posts = data.Posts.length;
+            data.Followers = data.Followers.length;
+            data.Followings = data.Followings.length;
+            return res.status(200).json(data)
+        } else {
+            return res.status(404).send('존재하지 않는 사용자입니다.');
+        }
+
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+})
 
 //로그인
 router.post('/login', isNotLoggedIn, (req, res, next) => {

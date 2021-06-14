@@ -4,24 +4,21 @@ import user from './user';
 import post from './post';
 
 
-// ssr을 위한 reducer;
-const reducer = (state = {} , action) => {
-    switch(action.type) {
+
+const rootReducer = (state, action) => {
+    switch (action.type) {
         case HYDRATE:
-            return {
-                ...state,
-                ...action.payload,
-            }
-        default:
-            return state;
+            console.log('HYDRATE', action);
+            return action.payload;
+        default : {
+            const combineReducer = combineReducers({
+                user,
+                post,
+            });
+            return combineReducer(state, action);
+        }
     }
 }
-
-const rootReducer = combineReducers({
-    index : reducer,
-    user,
-    post,
-})
 
 
 
