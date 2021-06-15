@@ -1,4 +1,4 @@
-import produce from 'immer';
+import produce from '../util/produce';
 
 // 액션 타입 정의
 
