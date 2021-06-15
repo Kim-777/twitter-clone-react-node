@@ -13,7 +13,6 @@ try {
     fs.mkdirSync('uploads');
 }
 
-
 const upload = multer({
     storage: multer.diskStorage({
         destination(req, file, done) {
@@ -82,6 +81,56 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
         next(error);
     }
 });
+
+
+router.get('/:postId', async (req, res, next) => {
+    try {
+        const post = await Post.findOne({
+            where: {id: req.params.postId}
+        });
+
+        console.log('404 바로 전');
+
+        if(!post) {
+            return res.status(404).send('존재하지 않는 게시글입니다.');
+        }
+
+        console.log('404 바로 후');
+
+        const fullPost = await Post.findOne({
+            where: {id: post.id},
+            include: [{
+                model: Post,
+                as: 'Retweet',
+                include: [{
+                    model: User,
+                    attributes: ['id', 'nickname']
+                }, {
+                    model: Image
+                }]
+            }, {
+                model: User,
+                attributes: ['id', 'nickname'],
+            }, {
+                model: User,
+                as: 'Likers',
+                attributes: ['id', 'nickname'],
+            }, {
+                model: Image,
+            }, {
+                model: Comment,
+                include: [{
+                    model: User,
+                    attributes: ['id', 'nickname'],
+                }],
+            }],
+        });
+        return res.status(201).json(fullPost);        
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+})
 
 
 router.post('/images', isLoggedIn, upload.array('image'), async (req, res, next) => {

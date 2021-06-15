@@ -25,7 +25,7 @@ const Home = () => {
     useEffect(() => {
         function onScroll() {
             // console.log(window.scrollY, document.documentElement.clientHeight, document.documentElement.scrollHeight);
-            if(window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
+            if(window.pageYOffset + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
                 if(hasMorePosts && !loadPostsLoading) {
                     const lastId = mainPosts[mainPosts.length - 1]?.id;
                     dispatch({
@@ -49,6 +49,7 @@ const Home = () => {
         <>
             <Head>
                 <title>chaty</title>
+                <link rel="shortcut icon" href="/favicon.png" />
             </Head>
             <AppLayout>
                 {me && <PostForm />}
